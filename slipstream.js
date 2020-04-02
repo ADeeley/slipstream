@@ -1,15 +1,17 @@
-const width = 600;
-const height = 400;
+const config = {
+  width: 600,
+  height: 400,
+  victory: false
+};
 
-let victory = false;
 let start; // use closure
 let player;
 let target;
 
 class Player {
-  constructor() {
+  constructor(canvasHeight) {
     this.x = 100;
-    this.y = height / 2;
+    this.y = canvasHeight / 2;
     this.diameter = 20;
     this.tolerance = 100;
     this.speedMultiplier = 2;
@@ -65,26 +67,26 @@ class Target {
 }
 
 function setup() {
-  createCanvas(width, height);
-  player = new Player();
-  target = new Target(height);
+  createCanvas(config.width, config.height);
+  player = new Player(config.height);
+  target = new Target(config.height);
   start = Date.now();
 }
 
 function checkVictory() {
-	console.log(player.x, target.x, target.diameter, player.diameter);
+  console.log(player.x, target.x, target.diameter, player.diameter);
   if (player.x > target.x - target.diameter + player.diameter) {
     const seconds = (Date.now() - start) / 1000;
     const message = `Victory in ${seconds} seconds!`;
 
     textSize(32);
-    text(message, 100, height / 5);
-    victory = true;
+    text(message, 100, config.height / 5);
+    config.victory = true;
   }
 }
 
 function draw() {
-  if (!victory) {
+  if (!config.victory) {
     background(220);
     target.move();
     player.move();
