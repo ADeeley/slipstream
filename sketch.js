@@ -1,7 +1,8 @@
 const config = {
   width: 600,
   height: 400,
-  victory: false
+  victory: false,
+  started: false
 };
 
 const assets = {
@@ -72,7 +73,7 @@ class Player {
     this.x = 100;
     this.y = canvasHeight / 2;
     this.diameter = 20;
-    this.tolerance = 100;
+    this.tolerance = 20;
     this.speedMultiplier = 2;
   }
 
@@ -126,9 +127,29 @@ class Target {
   }
 }
 
+function drawStartScreen() {
+  let message = "-> SLIPSTREAM ->";
+  background(200);
+  textSize(20);
+  text(message, 100, config.height / 5);
+
+  message = "Follow behind the target car to move forwards!";
+  textSize(14);
+  text(message, 100, config.height / 4);
+
+  button = createButton("Start");
+  button.position(100, config.height / 3);
+  button.mousePressed(startGame);
+}
+
+function startGame() {
+  config.started = true;
+  button.hide();
+}
 function setup() {
   createCanvas(config.width, config.height);
   preloadAssets();
+  drawStartScreen();
   drawDividers = drawRoad();
   player = new Player(config.height);
   target = new Target(config.height);
@@ -147,6 +168,9 @@ function checkVictory() {
 }
 
 function draw() {
+  if (!config.started) {
+    return;
+  }
   if (!config.victory) {
     background(220);
     drawGrass();
