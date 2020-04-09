@@ -4,9 +4,26 @@ const config = {
   victory: false
 };
 
-let start; // use closure
+const assets = {
+  playerImg: "",
+  targetImg: ""
+};
+
 let player;
 let target;
+let performance;
+
+function preloadAssets() {
+  assets.playerImg = loadImage("assets/car.png");
+  assets.targetImg = loadImage("assets/target-car.png");
+}
+
+function timer() {
+  const start = Date.now();
+  return () => {
+    return (Date.now() - start) / 1000;
+  };
+}
 
 class Player {
   constructor(canvasHeight) {
@@ -18,7 +35,8 @@ class Player {
   }
 
   draw() {
-    circle(this.x, this.y, 20);
+    image(assets.playerImg, this.x, this.y);
+    // circle(this.x, this.y, 20);
     fill(0);
   }
 
@@ -46,7 +64,7 @@ class Target {
     this.canvasHeight = canvasHeight;
   }
   draw() {
-    circle(this.x, this.y, this.diameter);
+   image(assets.targetImg, this.x, this.y);
     fill(255);
   }
 
@@ -68,16 +86,16 @@ class Target {
 
 function setup() {
   createCanvas(config.width, config.height);
+  preloadAssets();
   player = new Player(config.height);
   target = new Target(config.height);
-  start = Date.now();
+  performance = timer();
 }
 
 function checkVictory() {
   console.log(player.x, target.x, target.diameter, player.diameter);
   if (player.x > target.x - target.diameter + player.diameter) {
-    const seconds = (Date.now() - start) / 1000;
-    const message = `Victory in ${seconds} seconds!`;
+    const message = `Victory in ${performance()} seconds!`;
 
     textSize(32);
     text(message, 100, config.height / 5);
