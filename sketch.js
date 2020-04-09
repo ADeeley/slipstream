@@ -32,7 +32,7 @@ function drawRoad() {
   const dividerWidth = 100;
   const dividerSeparation = 20;
   const dividerCount = config.width / dividerWidth + 1;
-  let xPos = 10;
+  let xPos = dividerSeparation;
 
   for (let i = dividerCount; i > 0; i--) {
     dividers.push(xPos);
@@ -41,9 +41,9 @@ function drawRoad() {
 
   return () => {
     dividers.forEach(xPos => {
-      rect(xPos, config.height / 2, 100, 10);
       fill(255);
       noStroke();
+      rect(xPos, config.height / 2, 100, 10);
     });
     // move them backwards
     dividers = dividers.map(xPos => (xPos -= 1));
@@ -53,9 +53,18 @@ function drawRoad() {
 
     if (outOfBounds) {
       dividers.shift(dividers.indexOf(outOfBounds));
-      dividers.push(dividers[dividers.length - 1] + dividerWidth + dividerSeparation);
+      dividers.push(
+        dividers[dividers.length - 1] + dividerWidth + dividerSeparation
+      );
     }
   };
+}
+
+function drawGrass() {
+  const grassSize = 30;
+  fill(0, 200, 0);
+  rect(0, 0, config.width, grassSize);
+  rect(0, config.height - grassSize, config.width, grassSize);
 }
 
 class Player {
@@ -140,6 +149,7 @@ function checkVictory() {
 function draw() {
   if (!config.victory) {
     background(220);
+    drawGrass();
     drawDividers();
     target.move();
     player.move();
