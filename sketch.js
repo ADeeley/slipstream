@@ -9,6 +9,8 @@ const assets = {
   targetImg: ""
 };
 
+let drawDividers;
+
 let player;
 let target;
 let performance;
@@ -25,6 +27,37 @@ function timer() {
   };
 }
 
+function drawRoad() {
+  let dividers = [];
+  const dividerWidth = 100;
+  const dividerSeparation = 20;
+  const dividerCount = config.width / dividerWidth + 1;
+  let xPos = 10;
+
+  for (let i = dividerCount; i > 0; i--) {
+    dividers.push(xPos);
+    xPos += dividerWidth + dividerSeparation;
+  }
+
+  return () => {
+    dividers.forEach(xPos => {
+      rect(xPos, config.height / 2, 100, 10);
+      fill(255);
+      noStroke();
+    });
+    // move them backwards
+    dividers = dividers.map(xPos => (xPos -= 1));
+
+    // add new dividers when they are off screen
+    const outOfBounds = dividers.find(el => el + dividerWidth < 1);
+
+    if (outOfBounds) {
+      dividers.shift(dividers.indexOf(outOfBounds));
+      dividers.push(dividers[dividers.length - 1] + dividerWidth + dividerSeparation);
+    }
+  };
+}
+
 class Player {
   constructor(canvasHeight) {
     this.x = 100;
@@ -37,7 +70,7 @@ class Player {
   draw() {
     image(assets.playerImg, this.x, this.y);
     // circle(this.x, this.y, 20);
-    fill(0);
+    // fill(0);
   }
 
   move() {
@@ -64,8 +97,8 @@ class Target {
     this.canvasHeight = canvasHeight;
   }
   draw() {
-   image(assets.targetImg, this.x, this.y);
-    fill(255);
+    image(assets.targetImg, this.x, this.y);
+    // fill(255);
   }
 
   move() {
@@ -87,13 +120,14 @@ class Target {
 function setup() {
   createCanvas(config.width, config.height);
   preloadAssets();
+  drawDividers = drawRoad();
   player = new Player(config.height);
   target = new Target(config.height);
   performance = timer();
 }
 
 function checkVictory() {
-  console.log(player.x, target.x, target.diameter, player.diameter);
+  //console.log(player.x, target.x, target.diameter, player.diameter);
   if (player.x > target.x - target.diameter + player.diameter) {
     const message = `Victory in ${performance()} seconds!`;
 
@@ -106,6 +140,7 @@ function checkVictory() {
 function draw() {
   if (!config.victory) {
     background(220);
+    drawDividers();
     target.move();
     player.move();
     player.moveForward(target.y);
